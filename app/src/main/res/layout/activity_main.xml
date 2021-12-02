@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:penColor="#A62727" />
+        app:penColor="#0E0D0D" />
 
     <Button
         android:id="@+id/btn_clear"

@@ -1,9 +1,6 @@
 package com.example.signatureexample
 
 import android.Manifest
-import android.app.Activity
-import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -19,26 +16,23 @@ import androidx.core.app.ActivityCompat
 import com.example.signatureexample.databinding.ActivityMainBinding
 import com.github.gcacace.signaturepad.views.SignaturePad
 import java.io.*
-import java.lang.Exception
 import java.util.*
-import android.content.ContextWrapper
-import android.os.Build
-import android.provider.MediaStore
 
 
 class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
 
     private lateinit var binding: ActivityMainBinding
-    private val REQUEST_EXTERNAL_STORAGE = 1
-    private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    private var imagePath: String? = ""
+
+    companion object {
+        val REQUEST_EXTERNAL_STORAGE = 1
+        val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         verifyStoragePermissions()
         binding = ActivityMainBinding.inflate(layoutInflater)
-        binding.signaturePad.setOnSignedListener(this)
         binding.btnClear.setOnClickListener {
             binding.signaturePad.clear()
         }
@@ -90,32 +84,6 @@ class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
     }
 
 
-    private fun getAlbumStorageDir(albumName: String?): File {
-        val directoryPictures = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_PICTURES
-        )
-        val file = File(directoryPictures, "imagenesPad")
-        if (!file.exists()) {
-            Log.w(this.toString(), "Directorio no creado")
-        }
-        return file
-    }
-
-
-    fun getAlbumStorageDihr(albumName: String?): File? {
-        // Get the directory for the user's public pictures directory.
-        val file = File(
-            Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES
-            ), albumName
-        )
-        if (!file.mkdirs()) {
-            Log.e("SignaturePad", "Directory not created")
-        }
-        return file
-    }
-
-
     @Throws(IOException::class)
     fun saveBitmapToJPG(bitmap: Bitmap, photo: File) {
         val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
@@ -164,18 +132,19 @@ class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
         this@MainActivity.sendBroadcast(mediaScanIntent)
     }
 
-
     override fun onStartSigning() {
-        Toast.makeText(this@MainActivity, "OnStartSigning", Toast.LENGTH_SHORT).show()
+
     }
 
     override fun onSigned() {
-        binding.btnClear.isEnabled = true
         binding.btnSave.isEnabled = true
+        binding.btnClear.isEnabled = true
     }
 
     override fun onClear() {
-        binding.btnClear.isEnabled = false
-        binding.btnSave.isEnabled = false
+        binding.btnSave.isEnabled = true
+        binding.btnClear.isEnabled = true
     }
+
+
 }
