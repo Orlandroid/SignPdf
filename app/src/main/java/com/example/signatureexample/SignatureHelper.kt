@@ -22,7 +22,7 @@ import java.io.OutputStream
 
 class SignatureHelper(private val context: Context) {
 
-    private fun saveSignature(signatureBitmap: Bitmap) {
+    fun saveSignature(signatureBitmap: Bitmap) {
         if (addJpgSignatureToGallery(signatureBitmap)) {
             Toast.makeText(
                 context,
@@ -62,7 +62,7 @@ class SignatureHelper(private val context: Context) {
     }
 
 
-    private fun verifyStoragePermissions() {
+    fun verifyStoragePermissions() {
         val permission = ActivityCompat.checkSelfPermission(
             context,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
