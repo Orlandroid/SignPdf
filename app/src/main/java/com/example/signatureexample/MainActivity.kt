@@ -70,8 +70,11 @@ class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
     private fun addJpgSignatureToGallery(signature: Bitmap): Boolean {
         var result = false
         try {
+            val directoryPictures = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES
+            )
             val photo = File(
-                getAlbumStorageDir("SignaturePad"),
+                directoryPictures,
                 String.format("Signature_%d.jpg", System.currentTimeMillis())
             )
             Log.w(this.toString(), photo.toString())
@@ -88,15 +91,26 @@ class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
 
 
     private fun getAlbumStorageDir(albumName: String?): File {
-        val directoryPictures = Environment.getExternalStorageState(
-            Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES
-            )
+        val directoryPictures = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES
         )
-        val file = File(directoryPictures)
-        Log.w(this.toString(), file.toString())
+        val file = File(directoryPictures, "imagenesPad")
         if (!file.exists()) {
             Log.w(this.toString(), "Directorio no creado")
+        }
+        return file
+    }
+
+
+    fun getAlbumStorageDihr(albumName: String?): File? {
+        // Get the directory for the user's public pictures directory.
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES
+            ), albumName
+        )
+        if (!file.mkdirs()) {
+            Log.e("SignaturePad", "Directory not created")
         }
         return file
     }
