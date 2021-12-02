@@ -31,27 +31,23 @@ class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
     private lateinit var binding: ActivityMainBinding
     private val REQUEST_EXTERNAL_STORAGE = 1
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private var imagePath: String? = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        verifyStoragePermissions(this)
+        verifyStoragePermissions()
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.signaturePad.setOnSignedListener(this)
         binding.btnClear.setOnClickListener {
             binding.signaturePad.clear()
         }
         binding.btnSave.setOnClickListener {
-            saveSign()
+            saveSignature()
         }
         setContentView(binding.root)
     }
 
-
-    private fun saveSign() {
-        val signatureBitmap: Bitmap = binding.signaturePad.signatureBitmap
-        saveMediaToStorage(signatureBitmap)
-    }
 
     private fun saveSignature() {
         val signatureBitmap: Bitmap = binding.signaturePad.signatureBitmap
@@ -67,51 +63,6 @@ class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
                 "Unable to store the signature",
                 Toast.LENGTH_SHORT
             ).show()
-        }
-    }
-
-
-    private fun saveMediaToStorage(bitmap: Bitmap) {
-        // Generating a file name
-        val filename = "${System.currentTimeMillis()}.jpg"
-
-        // Output stream
-        var fos: OutputStream? = null
-
-        // For devices running android >= Q
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // getting the contentResolver
-            this.contentResolver?.also { resolver ->
-
-                // Content resolver will process the contentvalues
-                val contentValues = ContentValues().apply {
-
-                    // putting file information in content values
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                }
-
-                // Inserting the contentValues to
-                // contentResolver and getting the Uri
-                val imageUri: Uri? =
-                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
-                // Opening an outputstream with the Uri that we got
-                fos = imageUri?.let { resolver.openOutputStream(it) }
-            }
-        } else {
-            // These for devices running on android < Q
-            val imagesDir =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val image = File(imagesDir, filename)
-            fos = FileOutputStream(image)
-        }
-
-        fos?.use {
-            // Finally writing the bitmap to the output stream that we opened
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-            Toast.makeText(this, "Captured View and saved to Gallery", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -137,27 +88,29 @@ class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
 
 
     private fun getAlbumStorageDir(albumName: String?): File {
-        val file = File(
+        val directoryPictures = Environment.getExternalStorageState(
             Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES
-            ), albumName
+            )
         )
+        val file = File(directoryPictures)
+        Log.w(this.toString(), file.toString())
         if (!file.exists()) {
-            Log.e("SignaturePad", "Directory not created")
+            Log.w(this.toString(), "Directorio no creado")
         }
-        Log.w("Error", file.toString())
         return file
     }
 
 
     @Throws(IOException::class)
-    fun saveBitmapToJPG(bitmap: Bitmap, photo: File?) {
+    fun saveBitmapToJPG(bitmap: Bitmap, photo: File) {
         val newBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(newBitmap)
         canvas.drawColor(Color.WHITE)
         canvas.drawBitmap(bitmap, 0f, 0f, null)
         val stream: OutputStream = FileOutputStream(photo)
-        newBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        val isSaveImage = newBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        Log.w("is save", isSaveImage.toString())
         stream.close()
     }
 
@@ -168,52 +121,24 @@ class MainActivity : AppCompatActivity(), SignaturePad.OnSignedListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_EXTERNAL_STORAGE -> {
-                if (grantResults.size <= 0
-                    || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Cannot write images to external storage", Toast.LENGTH_SHORT).show();
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Tienes permisos para write", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    private fun verifyStoragePermissions(activity: Activity?) {
+    private fun verifyStoragePermissions() {
         val permission = ActivityCompat.checkSelfPermission(
-            activity!!,
+            this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
-                activity,
+                this,
                 PERMISSIONS_STORAGE,
                 REQUEST_EXTERNAL_STORAGE
             )
-        }
-    }
-
-
-    private fun saveToGallery(bitmap: Bitmap) {
-        var outputStream: FileOutputStream? = null
-        val file = Environment.getExternalStorageDirectory()
-        val dir = File(file.absolutePath.toString() + "/MyPics")
-        dir.mkdirs()
-        val filename = String.format("%d.png", System.currentTimeMillis())
-        val outFile = File(dir, filename)
-        try {
-            outputStream = FileOutputStream(outFile)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-        try {
-            outputStream!!.flush()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        try {
-            outputStream!!.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
