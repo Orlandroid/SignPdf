@@ -1,10 +1,8 @@
 package com.example.signatureexample
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -12,9 +10,6 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import com.example.signatureexample.MainActivity.Companion.PERMISSIONS_STORAGE
-import com.example.signatureexample.MainActivity.Companion.REQUEST_EXTERNAL_STORAGE
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -61,20 +56,6 @@ class SignatureHelper(private val context: Context) {
         return result
     }
 
-
-    fun verifyStoragePermissions() {
-        val permission = ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                context as Activity,
-                PERMISSIONS_STORAGE,
-                REQUEST_EXTERNAL_STORAGE
-            )
-        }
-    }
 
     @Throws(IOException::class)
     fun saveBitmapToJPG(bitmap: Bitmap, photo: File) {
