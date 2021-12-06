@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.signatureexample.databinding.FragmentSignatureHelperBinding
 import com.github.gcacace.signaturepad.views.SignaturePad
 
@@ -38,6 +39,7 @@ class SignatureFragment : Fragment(), SignaturePad.OnSignedListener {
         }
         binding.btnSave.setOnClickListener {
             signatureHelper?.saveSignature(signatureBitmap = binding.signaturePad.signatureBitmap)
+            findNavController().popBackStack()
         }
         return binding.root
     }
