@@ -1,4 +1,4 @@
-package com.example.signatureexample
+package com.example.signatureexample.ui.signature
 
 import android.Manifest
 import android.content.pm.PackageManager

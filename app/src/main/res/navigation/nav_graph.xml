@@ -3,10 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/signatureFragment">
+    app:startDestination="@id/pdfViewFragment">
     <fragment
         android:id="@+id/signatureFragment"
-        android:name="com.example.signatureexample.SignatureFragment"
+        android:name="com.example.signatureexample.ui.signature.SignatureFragment"
         android:label="fragment_signature_helper"
         tools:layout="@layout/fragment_signature_helper" />
+    <fragment
+        android:id="@+id/pdfViewFragment"
+        android:name="com.example.signatureexample.ui.pdfview.PdfViewFragment"
+        android:label="fragment_pdf_view"
+        tools:layout="@layout/fragment_pdf_view" >
+        <action
+            android:id="@+id/action_pdfViewFragment_to_signatureFragment"
+            app:destination="@id/signatureFragment" />
+    </fragment>
 </navigation>
