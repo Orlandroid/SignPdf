@@ -1,27 +1,37 @@
 package com.example.signatureexample.ui.pdfview
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.signatureexample.R
 import com.example.signatureexample.databinding.FragmentPdfViewBinding
-import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle
+import com.example.signatureexample.ui.util.readXMLFileFromAsset
+import java.lang.StringBuilder
 
 class PdfViewFragment : Fragment() {
 
     private var _binding: FragmentPdfViewBinding? = null
     private val binding get() = _binding!!
-
+    var xmlStr: StringBuilder? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPdfViewBinding.inflate(layoutInflater)
-        displayFromAsset()
+        getDataForWebViewPge()
         return binding.root
+    }
+
+
+    private fun getDataForWebViewPge(){
+        xmlStr = readXMLFileFromAsset(requireContext(),"html/Myfirma.html")
+        xmlStr!!.replace(xmlStr!!.indexOf("*signPath"), xmlStr!!.indexOf("*signPath")+"*signPath".length,"/imagenes/android")
+        Log.w("ERROR",xmlStr.toString())
+        binding.webView.loadDataWithBaseURL("file:///android_asset/html/", xmlStr.toString(), "text/html", "utf-8", "")
+        Log.w("CONTENT",xmlStr.toString())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +40,7 @@ class PdfViewFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_sign,menu)
+        inflater.inflate(R.menu.menu_sign, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -42,15 +52,6 @@ class PdfViewFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-
-    private fun displayFromAsset() {
-        binding.pdfView.fromAsset("git.pdf")
-            .defaultPage(0)
-            .enableAnnotationRendering(true)
-            .scrollHandle(DefaultScrollHandle(requireContext()))
-            .spacing(10)
-            .load()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
