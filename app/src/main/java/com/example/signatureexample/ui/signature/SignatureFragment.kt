@@ -42,9 +42,7 @@ class SignatureFragment : Fragment(), SignaturePad.OnSignedListener {
         }
         binding.btnSave.setOnClickListener {
             signatureHelper?.saveSignature(signatureBitmap = binding.signaturePad.signatureBitmap)
-            val urlImageBase64 = bitMapToBase64(binding.signaturePad.signatureBitmap)
-            Log.w("IMAGEN",urlImageBase64)
-            findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_BASE_64, urlImageBase64)
+            findNavController().previousBackStackEntry?.savedStateHandle?.set("firmado" ,true)
             findNavController().popBackStack()
         }
         return binding.root
