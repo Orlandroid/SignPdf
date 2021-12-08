@@ -29,7 +29,7 @@ class PdfViewFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        works()
+        getDataForWebViewPge()
     }
 
     private fun works() {
@@ -44,12 +44,10 @@ class PdfViewFragment : Fragment() {
         binding.webView.loadDataWithBaseURL("", html, "text/html", "utf-8", "")
     }
 
-    private fun getDataForWebViewPge(imageBase64: String) {
-        val imageBase64U = "data:image/jpeg;base64,$imageBase64"
-        Log.w("Android", Environment.getExternalStorageDirectory().absolutePath)
-        Log.w("Android", imageBase64U)
+    private fun getDataForWebViewPge() {
+        val base64Image = "data:image/jpeg;base64,${Works.ImageToBase64(requireContext())}"
         xmlStr = readXMLFileFromAsset(requireContext())
-        //xmlStr!!.replace(xmlStr!!.indexOf("*signPath"), xmlStr!!.indexOf("*signPath") + "*signPath".length, imageBase64U)
+        xmlStr!!.replace(xmlStr!!.indexOf("MyImagen"), xmlStr!!.indexOf("MyImagen") + "MyImagen".length, base64Image)
         binding.webView.loadDataWithBaseURL(
             "file:///android_asset/html/",
             xmlStr.toString(),
