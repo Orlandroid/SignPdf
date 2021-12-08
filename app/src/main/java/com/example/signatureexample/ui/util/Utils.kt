@@ -2,13 +2,10 @@ package com.example.signatureexample.ui.util
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Base64
 import android.util.Log
-import com.example.signatureexample.R
 import java.io.*
-import java.util.Base64.getEncoder
 
 
 @Throws(IOException::class)
@@ -28,6 +25,10 @@ fun getDirectoryPictures(): File =
     Environment.getExternalStoragePublicDirectory(
         Environment.DIRECTORY_PICTURES
     )
+
+fun getFilePdf(): File {
+    return File(getDirectoryPictures(), "kotlin.pdf")
+}
 
 fun bitMapToBase64(bitmap: Bitmap): String {
     val baos = ByteArrayOutputStream()

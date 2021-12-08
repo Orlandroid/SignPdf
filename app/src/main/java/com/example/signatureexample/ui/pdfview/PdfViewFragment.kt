@@ -1,6 +1,7 @@
 package com.example.signatureexample.ui.pdfview
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -9,7 +10,9 @@ import com.example.signatureexample.R
 import com.example.signatureexample.databinding.FragmentPdfViewBinding
 import com.example.signatureexample.ui.util.Works
 import com.example.signatureexample.ui.util.getDirectoryPictures
+import com.example.signatureexample.ui.util.getFilePdf
 import com.example.signatureexample.ui.util.readXMLFileFromAsset
+import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle
 import org.nvest.html_to_pdf.HtmlToPdfConvertor
 import java.io.File
 import java.lang.StringBuilder
@@ -35,6 +38,8 @@ class PdfViewFragment : Fragment() {
             ?.observe(viewLifecycleOwner) { data ->
                 if (data) {
                     getDataForWebViewPge()
+                    convertHtmlToPdf(xmlStr!!.toString())
+                    displayPdfFromFile()
                 }
             }
     }
@@ -47,14 +52,7 @@ class PdfViewFragment : Fragment() {
             xmlStr!!.indexOf("MyImagen") + "MyImagen".length,
             base64Image
         )
-        binding.webView.loadDataWithBaseURL(
-            "file:///android_asset/html/",
-            xmlStr.toString(),
-            "text/html",
-            "utf-8",
-            ""
-        )
-        convertHtmlToPdf(xmlStr!!.toString())
+
     }
 
     private fun convertHtmlToPdf(htmlString: String) {
@@ -73,6 +71,16 @@ class PdfViewFragment : Fragment() {
                 ).show()
             })
     }
+
+    private fun displayPdfFromFile() {
+        binding.pdfView.fromFile(getFilePdf())
+            .defaultPage(0)
+            .enableAnnotationRendering(true)
+            .scrollHandle(DefaultScrollHandle(requireContext()))
+            .spacing(10)
+            .load()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
