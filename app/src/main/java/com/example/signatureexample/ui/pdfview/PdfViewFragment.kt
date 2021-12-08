@@ -25,35 +25,29 @@ class PdfViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPdfViewBinding.inflate(layoutInflater)
-        dontWorks()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(
-            IMAGE_BASE_64
-        )?.observe(viewLifecycleOwner) { data ->
-            Log.w("data", data)
-
-        }
+        works()
     }
 
-    private fun dontWorks(){
+    private fun works() {
         initWebView()
         val base = Environment.getExternalStorageDirectory().absolutePath.toString()
-        Log.w("Hola",base)
+        Log.w("Hola", base)
         val imagePath = "$base/image_name.jpg"
         val imagen = "https://www.muycomputer.com/wp-content/uploads/2012/10/whatsapp-630x405.jpg"
         val base64Image = "data:image/jpeg;base64,${Works.ImageToBase64(requireContext())}"
         val html = "<html><head></head><body><p>Hola</p> <img src=\"$base64Image\"> </body></html>"
-        Log.w("web",html)
+        Log.w("web", html)
         binding.webView.loadDataWithBaseURL("", html, "text/html", "utf-8", "")
     }
 
     private fun getDataForWebViewPge(imageBase64: String) {
         val imageBase64U = "data:image/jpeg;base64,$imageBase64"
         Log.w("Android", Environment.getExternalStorageDirectory().absolutePath)
-        Log.w("Android",imageBase64U)
+        Log.w("Android", imageBase64U)
         xmlStr = readXMLFileFromAsset(requireContext())
         //xmlStr!!.replace(xmlStr!!.indexOf("*signPath"), xmlStr!!.indexOf("*signPath") + "*signPath".length, imageBase64U)
         binding.webView.loadDataWithBaseURL(
@@ -67,7 +61,7 @@ class PdfViewFragment : Fragment() {
 
     private fun initWebView() {
         with(binding) {
-            webView.settings.allowFileAccess=true
+            webView.settings.allowFileAccess = true
             webView.settings.javaScriptEnabled = true
             webView.settings.blockNetworkImage = false
             webView.settings.domStorageEnabled = true

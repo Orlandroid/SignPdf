@@ -6,8 +6,6 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
-import com.example.signatureexample.R;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
@@ -15,7 +13,8 @@ public class Works {
 
     public static String ImageToBase64(Context context) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.hombre);
+        //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.hombre);
+        Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/Signature.jpg");
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
         byte[] imageBytes = stream.toByteArray();
         Log.w("IMAGENES", Arrays.toString(imageBytes));
