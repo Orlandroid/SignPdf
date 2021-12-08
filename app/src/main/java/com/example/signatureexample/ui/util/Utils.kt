@@ -2,10 +2,13 @@ package com.example.signatureexample.ui.util
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Base64
-import java.lang.StringBuilder
+import android.util.Log
+import com.example.signatureexample.R
 import java.io.*
+import java.util.Base64.getEncoder
 
 
 @Throws(IOException::class)
@@ -27,8 +30,11 @@ fun getDirectoryPictures(): File =
     )
 
 fun bitMapToBase64(bitmap: Bitmap): String {
-    val byteArrayOutputStream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-    val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
-    return Base64.encodeToString(byteArray, Base64.DEFAULT)
+    val baos = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+    val b = baos.toByteArray()
+    Log.w("Imagen", b.toString())
+    return Base64.encodeToString(b, Base64.DEFAULT)
 }
+
+

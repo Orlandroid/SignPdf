@@ -1,6 +1,6 @@
 package com.example.signatureexample.ui.signature
 
-import android.R.attr
+
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap

@@ -2,7 +2,6 @@ package com.example.signatureexample.ui.pdfview
 
 import android.os.Bundle
 import android.os.Environment
-import android.util.Base64
 import android.util.Log
 import android.view.*
 import android.webkit.WebView
@@ -11,8 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.signatureexample.R
 import com.example.signatureexample.databinding.FragmentPdfViewBinding
 import com.example.signatureexample.ui.signature.SignatureFragment.Companion.IMAGE_BASE_64
-import com.example.signatureexample.ui.signature.SignatureHelper.Companion.SIGNATURE_IMAGE_NAME
-import com.example.signatureexample.ui.util.getDirectoryPictures
+import com.example.signatureexample.ui.util.Works
 import com.example.signatureexample.ui.util.readXMLFileFromAsset
 import java.lang.StringBuilder
 
@@ -21,31 +19,43 @@ class PdfViewFragment : Fragment() {
     private var _binding: FragmentPdfViewBinding? = null
     private val binding get() = _binding!!
     private var xmlStr: StringBuilder? = null
-    private var urlImage = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPdfViewBinding.inflate(layoutInflater)
+        dontWorks()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(IMAGE_BASE_64)?.observe(viewLifecycleOwner) { data ->
-            Log.w("data",data)
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(
+            IMAGE_BASE_64
+        )?.observe(viewLifecycleOwner) { data ->
+            Log.w("data", data)
+
         }
     }
 
+    private fun dontWorks(){
+        initWebView()
+        val base = Environment.getExternalStorageDirectory().absolutePath.toString()
+        Log.w("Hola",base)
+        val imagePath = "$base/image_name.jpg"
+        val imagen = "https://www.muycomputer.com/wp-content/uploads/2012/10/whatsapp-630x405.jpg"
+        val base64Image = "data:image/jpeg;base64,${Works.ImageToBase64(requireContext())}"
+        val html = "<html><head></head><body><p>Hola</p> <img src=\"$base64Image\"> </body></html>"
+        Log.w("web",html)
+        binding.webView.loadDataWithBaseURL("", html, "text/html", "utf-8", "")
+    }
+
     private fun getDataForWebViewPge(imageBase64: String) {
-        if (imageBase64.isEmpty() or (imageBase64 == "")){
-            return
-        }
+        val imageBase64U = "data:image/jpeg;base64,$imageBase64"
         Log.w("Android", Environment.getExternalStorageDirectory().absolutePath)
-        urlImage = "${getDirectoryPictures()}/$SIGNATURE_IMAGE_NAME"
-        Log.w("DIR", urlImage)
+        Log.w("Android",imageBase64U)
         xmlStr = readXMLFileFromAsset(requireContext())
-        xmlStr!!.replace(xmlStr!!.indexOf("*signPath"), xmlStr!!.indexOf("*signPath")+"*signPath".length,imageBase64)
+        //xmlStr!!.replace(xmlStr!!.indexOf("*signPath"), xmlStr!!.indexOf("*signPath") + "*signPath".length, imageBase64U)
         binding.webView.loadDataWithBaseURL(
             "file:///android_asset/html/",
             xmlStr.toString(),
@@ -57,6 +67,7 @@ class PdfViewFragment : Fragment() {
 
     private fun initWebView() {
         with(binding) {
+            webView.settings.allowFileAccess=true
             webView.settings.javaScriptEnabled = true
             webView.settings.blockNetworkImage = false
             webView.settings.domStorageEnabled = true
