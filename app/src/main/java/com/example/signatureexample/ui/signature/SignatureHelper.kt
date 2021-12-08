@@ -1,5 +1,6 @@
 package com.example.signatureexample.ui.signature
 
+import android.R.attr
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -9,12 +10,15 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
+import java.io.*
+
 
 class SignatureHelper(private val context: Context) {
+
+    companion object {
+        const val SIGNATURE_IMAGE_NAME = "Signature.jpg"
+        const val URL_IMAGE_BASE_64 = ""
+    }
 
     fun saveSignature(signatureBitmap: Bitmap) {
         if (addJpgSignatureToGallery(signatureBitmap)) {
@@ -32,7 +36,6 @@ class SignatureHelper(private val context: Context) {
         }
     }
 
-
     private fun addJpgSignatureToGallery(signature: Bitmap): Boolean {
         var result = false
         try {
@@ -41,7 +44,7 @@ class SignatureHelper(private val context: Context) {
             )
             val photo = File(
                 directoryPictures,
-                String.format("Signature_%d.jpg", System.currentTimeMillis())
+                SIGNATURE_IMAGE_NAME
             )
             Log.w(this.toString(), photo.toString())
             saveBitmapToJPG(signature, photo)
@@ -67,6 +70,7 @@ class SignatureHelper(private val context: Context) {
         Log.w("is save", isSaveImage.toString())
         stream.close()
     }
+
 
     private fun scanMediaFile(photo: File) {
         val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)

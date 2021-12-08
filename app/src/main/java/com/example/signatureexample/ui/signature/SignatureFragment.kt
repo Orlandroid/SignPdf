@@ -3,6 +3,7 @@ package com.example.signatureexample.ui.signature
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.signatureexample.databinding.FragmentSignatureHelperBinding
+import com.example.signatureexample.ui.util.bitMapToBase64
 import com.github.gcacace.signaturepad.views.SignaturePad
 
 class SignatureFragment : Fragment(), SignaturePad.OnSignedListener {
@@ -20,6 +22,7 @@ class SignatureFragment : Fragment(), SignaturePad.OnSignedListener {
     private var signatureHelper: SignatureHelper? = null
 
     companion object {
+        const val IMAGE_BASE_64 ="imagen"
         const val REQUEST_EXTERNAL_STORAGE = 1
         val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
@@ -39,6 +42,9 @@ class SignatureFragment : Fragment(), SignaturePad.OnSignedListener {
         }
         binding.btnSave.setOnClickListener {
             signatureHelper?.saveSignature(signatureBitmap = binding.signaturePad.signatureBitmap)
+            val urlImageBase64 = bitMapToBase64(binding.signaturePad.signatureBitmap)
+            Log.w("IMAGEN",urlImageBase64)
+            findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_BASE_64, urlImageBase64)
             findNavController().popBackStack()
         }
         return binding.root
@@ -76,7 +82,7 @@ class SignatureFragment : Fragment(), SignaturePad.OnSignedListener {
             )
         }
     }
-    
+
     override fun onStartSigning() {
 
     }
